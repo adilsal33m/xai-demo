@@ -10,6 +10,6 @@ st.subheader('Upcoming Features')
 todo = """
 - [ ] SHAP Values
 - [ ] Counterfactual Explanations
-- [ ] Other ML Models  
+- [ ] Ability to select ML models  
 """
 st.markdown(todo)
