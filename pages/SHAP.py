@@ -1,11 +1,12 @@
-from functools import cache
 import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-import lime
+import shap
 from dill import loads
+
+shap.initjs()
 
 
 @st.cache(allow_output_mutation=True)
@@ -24,7 +25,7 @@ def get_model():
 @st.cache(allow_output_mutation=True)
 def get_explainer():
     data = load_file()
-    return data['explainers']['lime']
+    return data['explainers']['shap']
 
 def prepare_df():
     data = load_file()
@@ -64,17 +65,14 @@ def predict(x):
 
 def explain(row,num_features = 10):
     explainer = get_explainer()
-    model = get_model()
-    exp = explainer.explain_instance(row,
-                                 model.predict_proba,
-                                 num_features=num_features)
-    
-    return exp.as_list()
+    row = row.astype('float')
+    shap_values = explainer(row)
+    return shap_values
 
 
 #Code starts here
 
-st.title('Health Assessment with Feature Influence using LIME')
+st.title('Health Assessment with Feature Influence using SHAP')
 
 age = st.selectbox('Age Category',['18-24','25-29','30-34','35-39','40-44','45-49','50-54',
        '55-59','60-64','65-69','70-74','75-79','80 or older'])
@@ -117,19 +115,7 @@ if st.button('Predict'):
     
     st.subheader('Feature influence on prediction')
     
-    data = explain(row.iloc[0].values)
-    # for v in data:
-    #     color = 'green' if v[1] < 0 else 'red'
-    #     st.markdown('<p>{} <span style="color:{}; font-size: 1.5em;">{}</span></p>'.format(v[0],color,abs(round(v[1],3))), unsafe_allow_html=True)
-    
+    data = explain(row)
     fig, ax = plt.subplots()
-    feature = [v[0] for v in data]
-    y_pos = np.arange(len(feature))
-    performance = [v[1] for v in data]
-
-    ax.barh(y_pos, performance, align='center',color=[('r' if p > 0 else 'g') for p in performance])
-    ax.set_yticks(y_pos, labels=feature)
-    ax.invert_yaxis()
-    ax.set_xlabel('Impact')
-    ax.set_title('Red corresponds to Heart Disease')
+    shap.plots.waterfall(data[0,:],max_display=20)
     st.pyplot(fig)
