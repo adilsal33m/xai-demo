@@ -30,40 +30,29 @@ def get_explainer():
 def prepare_df():
     data = load_file()
     columns = data['columns']
-    trans_gh = data['transform_gen_health']
-    trans_age = data['transform_age_category']
     df = pd.DataFrame(columns= columns)
     
     row = {
         'BMI': bmi,
-        # 'PhysicalHealth': p_health,
-        # 'MentalHealth': m_health,
         'SleepTime': sleep,
         'Smoking_Yes': 1 if smoking else 0,
         'AlcoholDrinking_Yes': 1 if alcohol else 0,
-        # 'Stroke_Yes': 1 if stroke else 0,
         'DiffWalking_Yes': 1 if diff_walking else 0,
         'Sex_Male': 1 if sex == 'Male' else 0,
-        'Diabetic_No, borderline diabetes': 1 if diabetes == 'No/Borderline' else 0,
-        'Diabetic_Yes': 1 if diabetes == 'Yes' else 0,
-        'Diabetic_Yes (during pregnancy)': 1 if diabetes == 'Yes(with Pregnancy)' else 0,
+        'Diabetic': 1 if diabetes else 0,
         'PhysicalActivity_Yes': 1 if p_activity else 0,
         'Asthma_Yes': 1 if asthma else 0,
         'KidneyDisease_Yes': 1 if k_disease else 0,
-        # 'SkinCancer_Yes': 1 if s_cancer else 0,
-        'GenHealth': trans_gh(gen_health),
-        'AgeCategory': trans_age(age)
+        'AgeCategory': age
     }
-    
-    df = df.append(row, ignore_index=True)
-    
+    df = df.append(row, ignore_index=True)    
     return  df
 
 def predict(x):
     model = get_model()
     return model.predict_proba(x)[0]
 
-def explain(row,num_features = 10):
+def explain(row):
     explainer = get_explainer()
     row = row.astype('float')
     shap_values = explainer(row)
@@ -74,21 +63,13 @@ def explain(row,num_features = 10):
 
 st.title('Health Assessment with Feature Influence using SHAP')
 
-age = st.selectbox('Age Category',['18-24','25-29','30-34','35-39','40-44','45-49','50-54',
-       '55-59','60-64','65-69','70-74','75-79','80 or older'])
+age = st.slider('Age',1,120,value=25)
 sex = st.selectbox('Gender',['Male','Female'])
-height = st.slider('Height (in cms)',100,250)
-weight = st.slider('Weight (in kgs)',10,200)
+height = st.slider('Height (in cms)',100,250,value=172)
+weight = st.slider('Weight (in kgs)',10,200,value=67)
 bmi = round(weight/pow(height/100,2),1)
 st.write("BMI: {}".format(bmi))
-# race = st.selectbox('Race',['Asian','Black','Hispanic','Other','White'])
-
-st.subheader('General Health')
-# p_health = st.slider('Physical Health (less indicates better health)',0,30)
-# m_health = st.slider('Mental Health (less indicates better health)',0,30)
-sleep = st.slider('Sleep (in hours)',0,12)
-gen_health = st.selectbox('General Health',['Poor','Fair','Good','Very good','Excellent'])
-
+sleep = st.slider('Sleep (in hours)',0,12,value=6)
 
 st.subheader('Habits')
 smoking = st.checkbox('Smoking')
@@ -98,10 +79,8 @@ p_activity = st.checkbox('Physical Activity')
 st.subheader('Known Ailments')
 asthma = st.checkbox('Asthma')
 k_disease = st.checkbox('Kidney Disease')
-# s_cancer = st.checkbox('Skin Cancer')
 diff_walking = st.checkbox('Walking Difficulties')
-# stroke = st.checkbox('Have you suffered from a stroke?')
-diabetes = st.selectbox('Diabetes',['No/Borderline','Yes','Yes(with Pregnancy)'])
+diabetes = st.checkbox('Diabetes')
 
 if st.button('Predict'):
     st.subheader('Prediction')
