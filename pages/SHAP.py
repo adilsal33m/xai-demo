@@ -17,10 +17,20 @@ def load_file():
         
     return loads(data)
 
-@st.cache(allow_output_mutation=True)
+def model_list():
+    return {
+        'Decision Tree': 'dt',
+        'K-Nearest Neighbours': 'knn',
+        'Logistic Regression': 'lr',
+        'Naive Bayes': 'naive_bayes',
+        'Random Forests': 'random_forest',
+        'XGBoost': 'xgboost'
+    }
+
 def get_model():
     data = load_file()
-    return data['model']
+    selected = model_list()[model]
+    return data['models'][selected]
 
 @st.cache(allow_output_mutation=True)
 def get_explainer():
@@ -45,7 +55,8 @@ def prepare_df():
         'KidneyDisease_Yes': 1 if k_disease else 0,
         'AgeCategory': age
     }
-    df = df.append(row, ignore_index=True)    
+    df = df.append(row, ignore_index=True) 
+    df = df.astype(float)     
     return  df
 
 def predict(x):
@@ -81,6 +92,9 @@ asthma = st.checkbox('Asthma')
 k_disease = st.checkbox('Kidney Disease')
 diff_walking = st.checkbox('Walking Difficulties')
 diabetes = st.checkbox('Diabetes')
+
+st.subheader('Model Parameters')
+model = st.selectbox('Select Model',model_list().keys())
 
 if st.button('Predict'):
     st.subheader('Prediction')

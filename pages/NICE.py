@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import xgboost
 
 from nice import NICE
 from dill import loads
@@ -15,10 +16,20 @@ def load_file():
         
     return loads(data)
 
-@st.cache(allow_output_mutation=True)
+def model_list():
+    return {
+        'Decision Tree': 'dt',
+        'K-Nearest Neighbours': 'knn',
+        'Logistic Regression': 'lr',
+        'Naive Bayes': 'naive_bayes',
+        'Random Forests': 'random_forest',
+        'XGBoost': 'xgboost'
+    }
+
 def get_model():
     data = load_file()
-    return data['model']
+    selected = model_list()[model]
+    return data['models'][selected]
 
 @st.cache(allow_output_mutation=True)
 def get_explainer():
@@ -54,7 +65,8 @@ def prepare_df():
         'KidneyDisease_Yes': 1 if k_disease else 0,
         'AgeCategory': age
     }
-    df = df.append(row, ignore_index=True)    
+    df = df.append(row, ignore_index=True)
+    df = df.astype(float)  
     return  df
 
 def predict(x):
@@ -73,7 +85,6 @@ def predict_proba(x):
 
 
 #Code starts here
-model = get_model()
 st.title('Health Assessment with Counterfactual Explanations using NICE')
 
 age = st.slider('Age',1,120,value=25)
@@ -97,6 +108,7 @@ diabetes = st.checkbox('Diabetes')
 
 st.subheader('Model Parameters')
 threshold = st.slider('CF Threshold (%)',0,100,value=5)
+model = st.selectbox('Select Model',model_list().keys())
 
 if st.button('Predict'):
     st.subheader('Prediction')

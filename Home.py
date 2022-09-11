@@ -6,12 +6,15 @@ imp = """
 - [x] [LIME](/LIME)
 - [x] [SHAP](/SHAP)
 - [x] [NICE](/NICE)
+- [ ] Ability to select ML models  
 """
 st.markdown(imp)
 
 st.subheader('Upcoming Features')
 todo = """
-- [ ] Counterfactual Explanations
-- [ ] Ability to select ML models  
+- [ ] Anchors
+- [ ] Prototypes
+- [ ] ELI5
+- [ ] More Counterfactual Explanations
 """
 st.markdown(todo)
