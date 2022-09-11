@@ -5,6 +5,7 @@ st.subheader('Implemented')
 imp = """
 - [x] [LIME](/LIME)
 - [x] [SHAP](/SHAP)
+- [x] [NICE](/NICE)
 """
 st.markdown(imp)
 
