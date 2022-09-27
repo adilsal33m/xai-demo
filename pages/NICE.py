@@ -7,6 +7,7 @@ import xgboost
 
 from nice import NICE
 from dill import loads
+from keras.models import load_model
 
 @st.cache(allow_output_mutation=True)
 def load_file():
@@ -19,25 +20,29 @@ def load_file():
 def model_list():
     return {
         'Decision Tree': 'dt',
+        'Gradient Boosting': 'gradient_boosting',
         'K-Nearest Neighbours': 'knn',
         'Logistic Regression': 'lr',
         'Naive Bayes': 'naive_bayes',
+        'Neural Net': 'neural_net',
         'Random Forests': 'random_forest',
-        'XGBoost': 'xgboost'
+        'XGBoost': 'xgboost',
     }
 
 def get_model():
-    data = load_file()
     selected = model_list()[model]
-    return data['models'][selected]
+    if selected == 'neural_net':
+        return load_model('nn_model.h5')
+    else:
+        data = load_file()
+        return data['models'][selected]
 
-@st.cache(allow_output_mutation=True)
 def get_explainer():
     data = load_file()
     X = data['data']['X']
     y = data['data']['y']
     nice_explainer = NICE(X_train = X,
-               predict_fn=predict_proba,
+               predict_fn=nice_predict_proba,
                y_train = y,
                cat_feat=[1,3,4,5,6,7,8,9],
                distance_metric='HEOM',
@@ -70,18 +75,25 @@ def prepare_df():
     return  df
 
 def predict(x):
-    model = get_model()
-    return model.predict_proba(x)[0]
+    return predict_proba(x)[0]
 
+
+def predict_proba(x):
+    model = get_model()
+    try:
+        return model.predict_proba(x)
+    except AttributeError:
+        v = 1 - model.predict(x)
+        return np.array([[x[0][0],x[1][0]] for x in list(zip(v,1-v))])
+
+def nice_predict_proba(x):
+        y = predict_proba(x)
+        return np.apply_along_axis(lambda x: (1,0) if x[1] < float(threshold)/100 else (0,1),1,y)
+    
 def explain(row):
     explainer = get_explainer()
     exp = explainer.explain(row)
     return exp
-
-def predict_proba(x):
-    model = get_model()
-    y = model.predict_proba(x)
-    return np.apply_along_axis(lambda x: (1,0) if x[1] < float(threshold)/100 else (0,1),1,y)
 
 
 #Code starts here

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 import lime
 from dill import loads
+from keras.models import load_model
 
 
 @st.cache(allow_output_mutation=True)
@@ -19,17 +20,22 @@ def load_file():
 def model_list():
     return {
         'Decision Tree': 'dt',
+        'Gradient Boosting': 'gradient_boosting',
         'K-Nearest Neighbours': 'knn',
         'Logistic Regression': 'lr',
         'Naive Bayes': 'naive_bayes',
+        'Neural Net': 'neural_net',
         'Random Forests': 'random_forest',
-        'XGBoost': 'xgboost'
+        'XGBoost': 'xgboost',
     }
 
 def get_model():
-    data = load_file()
     selected = model_list()[model]
-    return data['models'][selected]
+    if selected == 'neural_net':
+        return load_model('nn_model.h5')
+    else:
+        data = load_file()
+        return data['models'][selected]
 
 @st.cache(allow_output_mutation=True)
 def get_explainer():
@@ -59,14 +65,20 @@ def prepare_df():
     return  df
 
 def predict(x):
+    return predict_proba(x)[0]
+
+def predict_proba(x):
     model = get_model()
-    return model.predict_proba(x)[0]
+    try:
+        return model.predict_proba(x)
+    except AttributeError:
+        v = 1 - model.predict(x)
+        return np.array([[x[0][0],x[1][0]] for x in list(zip(v,1-v))])
 
 def explain(row,num_features = 10):
     explainer = get_explainer()
-    model = get_model()
     exp = explainer.explain_instance(row,
-                                 model.predict_proba,
+                                 predict_proba,
                                  num_features=num_features)
     
     return exp.as_list()

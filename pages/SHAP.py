@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 
 import shap
 from dill import loads
+from keras.models import load_model
 
 shap.initjs()
 
@@ -20,22 +21,30 @@ def load_file():
 def model_list():
     return {
         'Decision Tree': 'dt',
+        'Gradient Boosting': 'gradient_boosting',
         'K-Nearest Neighbours': 'knn',
         'Logistic Regression': 'lr',
         'Naive Bayes': 'naive_bayes',
+        'Neural Net': 'neural_net',
         'Random Forests': 'random_forest',
-        'XGBoost': 'xgboost'
+        'XGBoost': 'xgboost',
     }
 
 def get_model():
-    data = load_file()
     selected = model_list()[model]
-    return data['models'][selected]
-
-@st.cache(allow_output_mutation=True)
+    if selected == 'neural_net':
+        return load_model('nn_model.h5')
+    else:
+        data = load_file()
+        return data['models'][selected]
+ 
+@st.cache(allow_output_mutation=True)   
 def get_explainer():
-    data = load_file()
-    return data['explainers']['shap']
+    data = load_file()['data']['X']
+    samples = data[np.random.choice(data.shape[0], 1000, replace=False)]
+    background = shap.maskers.Independent(samples)
+    shap_explainer = shap.Explainer(shap_predict, background)
+    return shap_explainer
 
 def prepare_df():
     data = load_file()
@@ -59,9 +68,24 @@ def prepare_df():
     df = df.astype(float)     
     return  df
 
-def predict(x):
+def predict_proba(x):
     model = get_model()
-    return model.predict_proba(x)[0]
+    try:
+        return model.predict_proba(x)
+    except AttributeError:
+        v = 1 - model.predict(x)
+        return np.array([[x[0][0],x[1][0]] for x in list(zip(v,1-v))])
+
+def predict(x):
+    return predict_proba(x)[0]
+
+def shap_predict(x):
+    m = get_model()
+    selected = model_list()[model]   
+    if selected == 'neural_net': 
+        return np.apply_along_axis(lambda x: x[0], 1, m.predict(x))
+    else:
+        return m.predict(x)
 
 def explain(row):
     explainer = get_explainer()
