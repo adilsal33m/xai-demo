@@ -6,13 +6,15 @@ imp = """
 - [x] [LIME](/LIME)
 - [x] [SHAP](/SHAP)
 - [x] [NICE](/NICE)
-- [ ] Ability to select ML models  
+- [X] Ability to select ML models
+- [X] Neural Nets  
+- [X] Anchors
+- [X] KernelShap Added
 """
 st.markdown(imp)
 
 st.subheader('Upcoming Features')
 todo = """
-- [ ] Anchors
 - [ ] Prototypes
 - [ ] ELI5
 - [ ] More Counterfactual Explanations
