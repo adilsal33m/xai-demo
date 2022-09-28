@@ -96,7 +96,8 @@ def explain(row):
 
 #Code starts here
 
-st.title('Health Assessment with Feature Influence using SHAP')
+st.markdown('## Health Assessment with Feature Influence using SHAP')
+st.markdown(r"[Read More](https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf)")
 
 age = st.slider('Age',1,120,value=25)
 sex = st.selectbox('Gender',['Male','Female'])

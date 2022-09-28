@@ -97,7 +97,8 @@ def explain(row):
 
 
 #Code starts here
-st.title('Health Assessment with Counterfactual Explanations using NICE')
+st.markdown('## Health Assessment with Counterfactual Explanations using NICE')
+st.markdown(r"[Read More](https://arxiv.org/pdf/2104.07411.pdf)")
 
 age = st.slider('Age',1,120,value=25)
 sex = st.selectbox('Gender',['Male','Female'])

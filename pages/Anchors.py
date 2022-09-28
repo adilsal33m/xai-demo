@@ -86,7 +86,8 @@ def explain(row):
 
 
 #Code starts here
-st.title('Health Assessment with Counterfactual Explanations using Anchors')
+st.markdown('## Health Assessment with Feature Influence using Anchors')
+st.markdown(r"[Read More](https://homes.cs.washington.edu/~marcotcr/aaai18.pdf)")
 
 age = st.slider('Age',1,120,value=25)
 sex = st.selectbox('Gender',['Male','Female'])

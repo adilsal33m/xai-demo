@@ -102,7 +102,8 @@ def plot_importance(feat_imp, feat_names, class_idx, **kwargs):
 
 
 #Code starts here
-st.title('Health Assessment with Counterfactual Explanations using KernelShap')
+st.markdown('## Health Assessment with Feature Influence using KernelShap')
+st.markdown(r"[Read More](https://proceedings.neurips.cc/paper/2017/file/8a20a8621978632d76c43dfd28b67767-Paper.pdf)")
 
 age = st.slider('Age',1,120,value=25)
 sex = st.selectbox('Gender',['Male','Female'])

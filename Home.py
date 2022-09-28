@@ -1,22 +1,31 @@
 import streamlit as st
 
 st.title('Explainable AI for Health Sector')
-st.subheader('Implemented')
 imp = """
-- [x] [LIME](/LIME)
-- [x] [SHAP](/SHAP)
-- [x] [NICE](/NICE)
-- [X] Ability to select ML models
-- [X] Neural Nets  
-- [X] Anchors
-- [X] KernelShap Added
+### Version History
+##### Version 0.1
+- [LIME](/LIME) explanation added
+- [SHAP](/SHAP) explanation added
+##### Version 0.2
+- [NICE](/NICE) explanation added
+##### Version 0.3
+- Support added to test multiple ML models
+##### Version 0.4
+- Neural Nets added
+##### Version 0.5
+- [Anchors](/Anchors) explanation added
+- [KernelSHAP](/KernelSHAP) explanation added
+##### Version 0.6
+- Reference papers added for each explanation (can be accessed via Read More link on respective page)
 """
 st.markdown(imp)
 
-st.subheader('Upcoming Features')
 todo = """
-- [ ] Prototypes
-- [ ] ELI5
-- [ ] More Counterfactual Explanations
+### Upcoming Features
+- ELI5
+- Skope Rules
+- Prototypes
+- More Counterfactual Explanations
+- Unified page for all explanations
 """
 st.markdown(todo)

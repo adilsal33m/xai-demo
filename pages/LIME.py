@@ -86,7 +86,8 @@ def explain(row,num_features = 10):
 
 #Code starts here
 
-st.title('Health Assessment with Feature Influence using LIME')
+st.markdown('## Health Assessment with Feature Influence using LIME')
+st.markdown(r"[Read More](https://arxiv.org/pdf/1602.04938.pdf)")
 
 age = st.slider('Age',1,120,value=25)
 sex = st.selectbox('Gender',['Male','Female'])
