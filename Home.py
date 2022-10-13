@@ -17,6 +17,8 @@ imp = """
 - [KernelSHAP](/KernelSHAP) explanation added
 ##### Version 0.6
 - Reference papers added for each explanation (can be accessed via Read More link on respective page)
+##### Version 0.7
+- [DiCE](/DiCE) added (may not work for neural networks)
 """
 st.markdown(imp)
 
