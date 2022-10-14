@@ -109,7 +109,7 @@ diff_walking = st.checkbox('Walking Difficulties')
 diabetes = st.checkbox('Diabetes')
 
 st.subheader('Model Parameters')
-threshold = st.slider('Anchor Threshold (%)',0,100,value=5)
+threshold = st.slider('Anchor Threshold (%)',0.0,1.0,value=0.05)
 model = st.selectbox('Select Model',model_list().keys())
 
 if st.button('Predict'):
