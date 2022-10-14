@@ -41,7 +41,7 @@ def get_explainer():
     data = load_file()
     X = data['data']['X']
     features = data['columns']
-    anchor_explainer = AnchorTabular(predict_proba, features)
+    anchor_explainer = AnchorTabular(model_predict, features)
     anchor_explainer.fit(X, disc_perc=(25, 50, 75))
     return anchor_explainer
 
@@ -70,6 +70,10 @@ def prepare_df():
 def predict(x):
     return predict_proba(x)[0]
 
+def model_predict(x):
+    predictions = predict_proba(x)
+    predictions = np.array([([1,0] if y[0] < 1 - p_threshold else [0,1]) for y in predictions])
+    return predictions
 
 def predict_proba(x):
     model = get_model()
@@ -109,7 +113,8 @@ diff_walking = st.checkbox('Walking Difficulties')
 diabetes = st.checkbox('Diabetes')
 
 st.subheader('Model Parameters')
-threshold = st.slider('Anchor Threshold (%)',0.0,1.0,value=0.05)
+threshold = st.slider('Anchor Threshold (%)',0.0,1.0,value=0.95)
+p_threshold = st.slider('Predict Threshold (%)',0.0,1.0,value=0.05)
 model = st.selectbox('Select Model',model_list().keys())
 
 if st.button('Predict'):
