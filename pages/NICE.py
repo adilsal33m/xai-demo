@@ -133,16 +133,15 @@ if st.button('Predict'):
     st.write('Chances of NOT suffering from heart disease:')
     st.markdown('<h3>{}%</h3>'.format(round(prediction[0]*100,1)), unsafe_allow_html=True)
     
-    if(prediction[1] > float(threshold)/100):
-        st.subheader('Counterfactual Explanation')
-        st.write('Original Instance')
-        row
-        results = explain(row.values)
-        prediction = predict(results)
-        results = pd.DataFrame(results, columns=row.columns)
-        st.write('Counterfactual Instance')
-        results
-        st.write('Chances of suffering from heart disease:')
-        st.markdown('<h3>{}%</h3>'.format(round(prediction[1]*100,1)), unsafe_allow_html=True)
-        st.write('Chances of NOT suffering from heart disease:')
-        st.markdown('<h3>{}%</h3>'.format(round(prediction[0]*100,1)), unsafe_allow_html=True)
+    st.subheader('Counterfactual Explanation')
+    st.write('Original Instance')
+    row
+    results = explain(row.values)
+    prediction = predict(results)
+    results = pd.DataFrame(results, columns=row.columns)
+    st.write('Counterfactual Instance')
+    results
+    st.write('Chances of suffering from heart disease:')
+    st.markdown('<h3>{}%</h3>'.format(round(prediction[1]*100,1)), unsafe_allow_html=True)
+    st.write('Chances of NOT suffering from heart disease:')
+    st.markdown('<h3>{}%</h3>'.format(round(prediction[0]*100,1)), unsafe_allow_html=True)
